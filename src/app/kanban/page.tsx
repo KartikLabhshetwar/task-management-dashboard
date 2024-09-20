@@ -11,13 +11,32 @@ import { Button } from "@/components/ui/button"
 import TaskForm from '@/components/TaskForm'
 import { useTasks } from '@/hooks/useTasks'
 
+interface Task {
+  _id: string;
+  title: string;
+  status: string;
+  priority: string;
+  dueDate: string;
+}
+
+type Column = {
+  title: string;
+  items: Task[];
+};
+
+type Columns = {
+  [key: string]: Column;
+};
+
+type TaskStatus = 'To Do' | 'In Progress' | 'Completed';
+
 export default function Kanban() {
   const router = useRouter()
   const { isAuthenticated, isLoading, checkAuthStatus } = useAuth()
   const { tasks, loading, error, fetchTasks, showToast } = useTaskContext();
   const { moveTask } = useTasks();
   const [isAddingTask, setIsAddingTask] = useState(false);
-  const [columns, setColumns] = useState({
+  const [columns, setColumns] = useState<Columns>({
     'To Do': { title: 'To Do', items: [] },
     'In Progress': { title: 'In Progress', items: [] },
     'Completed': { title: 'Completed', items: [] }
@@ -35,7 +54,7 @@ export default function Kanban() {
 
   useEffect(() => {
     if (tasks.length > 0) {
-      const newColumns = {
+      const newColumns: Columns = {
         'To Do': { title: 'To Do', items: [] },
         'In Progress': { title: 'In Progress', items: [] },
         'Completed': { title: 'Completed', items: [] }
@@ -77,7 +96,7 @@ export default function Kanban() {
       setColumns(newColumns);
 
       // Update the task status in the backend
-      await moveTask(removed._id, destination.droppableId);
+      await moveTask(removed._id, destination.droppableId as TaskStatus);
     } else {
       const column = columns[source.droppableId];
       const copiedItems = [...column.items];
