@@ -5,7 +5,7 @@ import { useRouter } from 'next/navigation'
 import { useAuth } from '@/context/AuthContext'
 import { useTaskContext } from '@/context/TaskContext'
 import Navbar from '@/components/Navbar'
-import { DragDropContext, Droppable, Draggable } from '@hello-pangea/dnd'
+import { DragDropContext, Droppable, Draggable, DropResult } from '@hello-pangea/dnd'
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import TaskForm from '@/components/TaskForm'
@@ -49,7 +49,7 @@ export default function Kanban() {
     }
   }, [tasks]);
 
-  const onDragEnd = async (result) => {
+  const onDragEnd = async (result: DropResult) => {
     if (!result.destination) return;
 
     const { source, destination } = result;

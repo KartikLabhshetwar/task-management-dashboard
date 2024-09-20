@@ -39,11 +39,12 @@ export const TaskProvider: React.FC<{ children: React.ReactNode }> = ({ children
   const fetchTasks = useCallback(async () => {
     try {
       setLoading(true);
-      const response = await axios.get('/api/tasks', { headers: getAuthHeader() });
+      const response = await axios.get('/api/tasks');
       setTasks(response.data);
       setError(null);
     } catch (err) {
       setError('Failed to fetch tasks');
+      console.error(err);
     } finally {
       setLoading(false);
     }
@@ -55,6 +56,7 @@ export const TaskProvider: React.FC<{ children: React.ReactNode }> = ({ children
       setTasks(prevTasks => [...prevTasks, response.data]);
     } catch (err) {
       setError('Failed to add task');
+      console.error(err);
     }
   }, []);
 
@@ -74,6 +76,7 @@ export const TaskProvider: React.FC<{ children: React.ReactNode }> = ({ children
       setTasks(prevTasks => prevTasks.filter(task => task._id !== id));
     } catch (err) {
       setError('Failed to delete task');
+      console.error(err);
     }
   }, []);
 

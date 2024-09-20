@@ -49,6 +49,7 @@ export default function SignUp() {
                             Log in
                         </Link>
                     </p>
+                    <p className="text-center mt-4">Don&apos;t have an account? <Link href="/auth/signup" className="text-blue-500 hover:underline">Sign up</Link></p>
                 </CardContent>
             </Card>
         </div>

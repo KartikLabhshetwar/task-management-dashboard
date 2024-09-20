@@ -39,7 +39,7 @@ export default function Login() {
                         <Button type="submit" className="w-full mt-4">Login</Button>
                     </form>
                     <p className="mt-4 text-sm text-center text-gray-600">
-                        Don't have an account?{' '}
+                        Don&apos;t have an account?{' '}
                         <Link href="/auth/signup" className="font-medium text-blue-600 hover:text-blue-500">
                             Create a new account
                         </Link>
