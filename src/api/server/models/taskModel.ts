@@ -1,6 +1,6 @@
 import mongoose from 'mongoose';
 
-const taskSchema = mongoose.Schema({
+const taskSchema = new mongoose.Schema({
     user: {
         type: mongoose.Schema.Types.ObjectId,
         required: true,
@@ -26,7 +26,7 @@ const taskSchema = mongoose.Schema({
     dueDate: {
         type: Date,
     }
-}, {timeStamps: true});
+}, {timestamps: true});
 
 const Task = mongoose.model("Task", taskSchema);
 
