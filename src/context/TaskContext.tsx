@@ -31,10 +31,10 @@ export const TaskProvider: React.FC<{ children: React.ReactNode }> = ({ children
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
 
-  const getAuthHeader = () => {
+  const getAuthHeader = useCallback(() => {
     const token = localStorage.getItem('token');
     return token ? { Authorization: `Bearer ${token}` } : {};
-  };
+  }, []);
 
   const fetchTasks = useCallback(async () => {
     try {
@@ -50,33 +50,31 @@ export const TaskProvider: React.FC<{ children: React.ReactNode }> = ({ children
     } finally {
       setLoading(false);
     }
-  }, []);
+  }, [getAuthHeader]);
 
   const addTask = useCallback(async (newTask: Omit<Task, '_id'>) => {
     try {
-      const token = localStorage.getItem('token');
       const response = await axios.post('/api/tasks', newTask, {
-        headers: { Authorization: `Bearer ${token}` }
+        headers: getAuthHeader()
       });
       setTasks(prevTasks => [...prevTasks, response.data]);
     } catch (err) {
       setError('Failed to add task');
       console.error(err);
     }
-  }, []);
+  }, [getAuthHeader]);
 
   const updateTask = useCallback(async (id: string, updatedFields: Partial<Task>) => {
     try {
-      const token = localStorage.getItem('token');
       const response = await axios.put(`/api/tasks/${id}`, updatedFields, {
-        headers: { Authorization: `Bearer ${token}` }
+        headers: getAuthHeader()
       });
       setTasks(prevTasks => prevTasks.map(task => task._id === id ? { ...task, ...response.data } : task));
     } catch (err) {
       setError('Failed to update task');
       throw err;
     }
-  }, []);
+  }, [getAuthHeader]);
 
   const deleteTask = useCallback(async (taskId: string) => {
     try {
