@@ -25,7 +25,7 @@ export default function TaskForm({ task, onSubmit, onCancel, showToast }: TaskFo
   const { addTask, updateTask } = useTaskContext()
   const [title, setTitle] = useState(task?.title || '')
   const [description, setDescription] = useState(task?.description || '')
-  const [status, setStatus] = useState(task?.status || 'To Do')
+  const [status, setStatus] = useState<'To Do' | 'In Progress' | 'Completed'>(task?.status || 'To Do')
   const [priority, setPriority] = useState(task?.priority || 'Medium')
   const [dueDate, setDueDate] = useState<Date | undefined>(task?.dueDate ? new Date(task.dueDate) : undefined)
 
@@ -43,7 +43,10 @@ export default function TaskForm({ task, onSubmit, onCancel, showToast }: TaskFo
         await updateTask(task._id, taskData)
         showToast('Task updated successfully', 'success')
       } else {
-        await addTask(taskData)
+        await addTask({
+          ...taskData,
+          dueDate: taskData.dueDate || ''
+        });
       }
       onSubmit()
     } catch (error) {
@@ -80,7 +83,7 @@ export default function TaskForm({ task, onSubmit, onCancel, showToast }: TaskFo
 
       <div className="space-y-2">
         <Label htmlFor="status">Status</Label>
-        <Select value={status} onValueChange={setStatus}>
+        <Select value={status} onValueChange={(value: 'To Do' | 'In Progress' | 'Completed') => setStatus(value)}>
           <SelectTrigger id="status">
             <SelectValue placeholder="Select status" />
           </SelectTrigger>
@@ -94,7 +97,7 @@ export default function TaskForm({ task, onSubmit, onCancel, showToast }: TaskFo
 
       <div className="space-y-2">
         <Label htmlFor="priority">Priority</Label>
-        <Select value={priority} onValueChange={setPriority}>
+        <Select value={priority} onValueChange={(value: "Low" | "Medium" | "High") => setPriority(value)}>
           <SelectTrigger id="priority">
             <SelectValue placeholder="Select priority" />
           </SelectTrigger>
