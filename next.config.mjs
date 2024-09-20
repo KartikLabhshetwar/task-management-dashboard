@@ -3,8 +3,9 @@ const nextConfig = {
   rewrites: async () => {
     return [
       {
-        source: '/api/:path*',
-        destination: 'http://localhost:5000/api/:path*',
+        source: "/api/:path*",
+        destination:
+          "https://task-management-dashboard-backend.onrender.com/api/:path*",
       },
     ];
   },

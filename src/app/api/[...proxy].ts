@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
 
-const TARGET = process.env.BACKEND_URL || 'http://localhost:5000'
+const TARGET = 'https://task-management-dashboard-backend.onrender.com'
 
 async function handler(req: NextRequest) {
   const url = new URL(req.url)
