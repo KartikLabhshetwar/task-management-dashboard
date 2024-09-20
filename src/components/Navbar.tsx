@@ -12,7 +12,6 @@ export default function Navbar() {
   const handleLogout = async () => {
     try {
       await logout()
-      showToast('You have successfully logged out', 'success')
       router.push('/auth/login')
     } catch (error) {
       console.error('Logout failed', error)

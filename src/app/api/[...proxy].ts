@@ -2,28 +2,38 @@ import { NextRequest, NextResponse } from 'next/server'
 
 const TARGET = process.env.BACKEND_URL || 'http://localhost:5000'
 
-export async function GET(req: NextRequest) {
+async function handler(req: NextRequest) {
   const url = new URL(req.url)
-  const response = await fetch(`${TARGET}${url.pathname}${url.search}`, {
-    method: req.method,
-    headers: req.headers,
-    body: req.body
-  })
+  try {
+    const response = await fetch(`${TARGET}${url.pathname}${url.search}`, {
+      method: req.method,
+      headers: {
+        ...req.headers,
+        'Content-Type': 'application/json',
+      },
+      body: req.body
+    })
 
-  return new NextResponse(response.body, {
-    status: response.status,
-    headers: response.headers
-  })
+    const data = await response.json()
+
+    return new NextResponse(JSON.stringify(data), {
+      status: response.status,
+      headers: {
+        'Content-Type': 'application/json',
+      }
+    })
+  } catch (error) {
+    console.error('API route error:', error)
+    return new NextResponse(JSON.stringify({ message: 'Internal Server Error' }), {
+      status: 500,
+      headers: {
+        'Content-Type': 'application/json',
+      }
+    })
+  }
 }
 
-export async function POST(req: NextRequest) {
-  return GET(req)
-}
-
-export async function PUT(req: NextRequest) {
-  return GET(req)
-}
-
-export async function DELETE(req: NextRequest) {
-  return GET(req)
-}
+export const GET = handler
+export const POST = handler
+export const PUT = handler
+export const DELETE = handler

@@ -39,11 +39,8 @@ export const TaskProvider: React.FC<{ children: React.ReactNode }> = ({ children
   const fetchTasks = useCallback(async () => {
     try {
       setLoading(true);
-      const token = localStorage.getItem('token');
       const response = await axios.get('/api/tasks', {
-        headers: {
-          Authorization: `Bearer ${token}`
-        }
+        headers: getAuthHeader()
       });
       setTasks(response.data);
       setError(null);
@@ -57,7 +54,10 @@ export const TaskProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
   const addTask = useCallback(async (newTask: Omit<Task, '_id'>) => {
     try {
-      const response = await axios.post('/api/tasks', newTask, { headers: getAuthHeader() });
+      const token = localStorage.getItem('token');
+      const response = await axios.post('/api/tasks', newTask, {
+        headers: { Authorization: `Bearer ${token}` }
+      });
       setTasks(prevTasks => [...prevTasks, response.data]);
     } catch (err) {
       setError('Failed to add task');
@@ -67,7 +67,10 @@ export const TaskProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
   const updateTask = useCallback(async (id: string, updatedFields: Partial<Task>) => {
     try {
-      const response = await axios.put(`/api/tasks/${id}`, updatedFields, { headers: getAuthHeader() });
+      const token = localStorage.getItem('token');
+      const response = await axios.put(`/api/tasks/${id}`, updatedFields, {
+        headers: { Authorization: `Bearer ${token}` }
+      });
       setTasks(prevTasks => prevTasks.map(task => task._id === id ? { ...task, ...response.data } : task));
     } catch (err) {
       setError('Failed to update task');
@@ -75,13 +78,20 @@ export const TaskProvider: React.FC<{ children: React.ReactNode }> = ({ children
     }
   }, []);
 
-  const deleteTask = useCallback(async (id: string) => {
+  const deleteTask = useCallback(async (taskId: string) => {
     try {
-      await axios.delete(`/api/tasks/${id}`, { headers: getAuthHeader() });
-      setTasks(prevTasks => prevTasks.filter(task => task._id !== id));
-    } catch (err) {
-      setError('Failed to delete task');
-      console.error(err);
+      await axios.delete(`/api/tasks/${taskId}`);
+      setTasks(tasks.filter(task => task._id !== taskId));
+      showToast('Task deleted successfully', 'success');
+    } catch (error) {
+      console.error('Error deleting task:', error);
+      showToast('Failed to delete task. Please try again.', 'error');
+      
+      // Add more detailed error logging
+      if (axios.isAxiosError(error)) {
+        console.error('Response status:', error.response?.status);
+        console.error('Response data:', error.response?.data);
+      }
     }
   }, []);
 

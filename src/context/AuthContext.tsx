@@ -24,20 +24,28 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   const [user, setUser] = useState<{ name: string; email: string } | null>(null);
   const router = useRouter();
 
+  const setAuthToken = (token: string | null) => {
+    if (token) {
+      localStorage.setItem('token', token);
+      axios.defaults.headers.common['Authorization'] = `Bearer ${token}`;
+    } else {
+      localStorage.removeItem('token');
+      delete axios.defaults.headers.common['Authorization'];
+    }
+  };
+
   const checkAuthStatus = async () => {
     const token = localStorage.getItem('token');
     if (token) {
       try {
         const response = await axios.get('/api/users/me', {
-          headers: { Authorization: `Bearer ${token}` },
+          headers: { Authorization: `Bearer ${token}` }
         });
-        if (response.status === 200) {
-          setUser(response.data);
-          setIsAuthenticated(true);
-        }
+        setUser(response.data);
+        setIsAuthenticated(true);
       } catch (error) {
-        console.error('Error checking authentication:', error);
-        localStorage.removeItem('token');
+        console.error('Auth check error:', error);
+        logout();
       }
     }
     setIsLoading(false);
@@ -50,43 +58,48 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   const login = async (email: string, password: string) => {
     try {
       const res = await axios.post('/api/users/login', { email, password });
-      if (res.status === 200) {
-        localStorage.setItem('token', res.data.token);
+      if (res.status === 200 && res.data.token) {
+        setAuthToken(res.data.token);
         setUser(res.data.user);
         setIsAuthenticated(true);
-        toast.success('Login successful!');
+        showToast('Login successful!', 'success');
         router.push('/workspace');
       }
     } catch (e) {
       console.error('Login failed', e);
-      toast.error('Failed to login. Please check your credentials.');
+      if (axios.isAxiosError(e) && e.response) {
+        showToast(`Login failed: ${e.response.data.message || 'Unknown error'}`, 'error');
+      } else {
+        showToast('Failed to login. Please try again later.', 'error');
+      }
     }
   };
 
   const signup = async (name: string, email: string, password: string) => {
     try {
-      const res = await axios.post('/api/users/register', { name, email, password });
-      if (res.status === 201) {
-        toast.success('Signup successful! Please log in.');
-        router.push('/auth/login');
-      }
-    } catch (e) {
-      console.error('Signup failed', e);
-      toast.error('Failed to create an account. Please try again.');
+      const response = await axios.post('/api/users/register', { name, email, password });
+      const { token } = response.data;
+      localStorage.setItem('token', token);
+      setUser(response.data);
+      setIsAuthenticated(true);
+      showToast('Signup successful', 'success');
+      router.push('/auth/login');
+    } catch (error) {
+      console.error('Signup error:', error);
+      showToast('Signup failed', 'error');
     }
   };
 
   const logout = () => {
-    localStorage.removeItem('token');
+    setAuthToken(null);
     setUser(null);
     setIsAuthenticated(false);
-    toast.success('Logged out successfully');
+    showToast('Logged out successfully', 'success');
     router.push('/auth/login');
   };
 
   const showToast = (message: string, type: 'success' | 'error') => {
-    // Implement your toast logic here
-    console.log(`${type.toUpperCase()}: ${message}`);
+    toast[type](message);
   };
 
   return (

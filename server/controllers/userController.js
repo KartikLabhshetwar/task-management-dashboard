@@ -1,15 +1,13 @@
-import User from '../models/userModel';
-import type { IUser } from '../models/userModel';
-import jwt from "jsonwebtoken";
-import { Request, Response } from 'express';
+import User from '../models/userModel.js';
+import jwt from 'jsonwebtoken';
 
-const generateToken = (id: string): string => {
+const generateToken = (id) => {
     const secret = process.env.JWT_SECRET;
     if (!secret) throw new Error('JWT_SECRET is not defined');
     return jwt.sign({id}, secret, {expiresIn: "30d"});
-}
+};
 
-export const registerUser = async (req: Request, res: Response) => {
+const registerUser = async (req, res) => {
     try {
         const {name, email, password} = req.body;
         const userExists = await User.findOne({email});
@@ -21,35 +19,35 @@ export const registerUser = async (req: Request, res: Response) => {
             _id: user._id,
             name: user.name,
             email: user.email,
-            token: generateToken(user._id as string),
+            token: generateToken(user._id),
         });
-    } catch (error: unknown) {
-        res.status(500).json({message: error instanceof Error ? error.message : 'An unknown error occurred'});
+    } catch (error) {
+        res.status(500).json({message: error.message || 'An unknown error occurred'});
     }
 };
 
-export const loginUser = async (req: Request, res: Response) => {
+const loginUser = async (req, res) => {
     try {
         const {email, password} = req.body;
-        const user = await User.findOne({email}) as IUser | null;
+        const user = await User.findOne({email});
         if(user && (await user.matchPassword(password))){
             res.json({
                 _id: user._id,
                 name: user.name,
                 email: user.email,
-                token: generateToken(user._id as string),
+                token: generateToken(user._id),
             });
         } else {
             res.status(401).json({ message: "Invalid email or password"});
         }
-    } catch (e: unknown){
-        res.status(500).json({message: e instanceof Error ? e.message : 'An unknown error occurred'});
+    } catch (e){
+        res.status(500).json({message: e.message || 'An unknown error occurred'});
     }
-}
+};
 
-export const getUserProfile = async (req: Request, res: Response) => {
+const getUserProfile = async (req, res) => {
     try {
-        const user = await User.findById((req.user as IUser)._id).select('-password');
+        const user = await User.findById(req.user._id).select('-password');
         if (user) {
             res.json({
                 _id: user._id,
@@ -59,8 +57,10 @@ export const getUserProfile = async (req: Request, res: Response) => {
         } else {
             res.status(404).json({ message: "User not found" });
         }
-    } catch (error: unknown) {
-        res.status(500).json({ message: error instanceof Error ? error.message : 'An unknown error occurred' });
+    } catch (error) {
+        res.status(500).json({ message: error.message || 'An unknown error occurred' });
     }
 };
+
+export { registerUser, loginUser, getUserProfile };
 

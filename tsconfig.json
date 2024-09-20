@@ -24,6 +24,6 @@
       "@/api/*": ["./src/api/*"]
     }
   },
-  "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx", ".next/types/**/*.ts"],
+  "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx", ".next/types/**/*.ts", "server/config/database.js", "server/controllers/taskController.js", "server/controllers/userController.js", "server/middleware/authMiddleware.js", "server/models/taskModel.js", "server/models/userModel.js", "server/routes/taskRoutes.js", "server/routes/userRoutes.js", "server/index.js"],
   "exclude": ["node_modules"]
 }
