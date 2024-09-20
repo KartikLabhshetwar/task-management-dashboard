@@ -7,12 +7,12 @@ async function handler(req: NextRequest) {
   const targetUrl = `${TARGET}${url.pathname}${url.search}`
 
   try {
+    const headers = new Headers(req.headers)
+    headers.set('Content-Type', 'application/json')
+
     const response = await fetch(targetUrl, {
       method: req.method,
-      headers: {
-        ...Object.fromEntries(req.headers),
-        'Content-Type': 'application/json',
-      },
+      headers: headers,
       body: req.body,
     })
 

@@ -34,7 +34,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     }
   }, []);
 
-  const checkAuthStatus = useCallback(async () => {
+  const checkAuthStatus = async () => {
     const token = localStorage.getItem('token');
     if (token) {
       try {
@@ -49,13 +49,13 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       }
     }
     setIsLoading(false);
-  }, []);
+  };
 
   useEffect(() => {
     checkAuthStatus();
-  }, [checkAuthStatus]);
+  }, []);
 
-  const login = useCallback(async (email: string, password: string) => {
+  const login = async (email: string, password: string) => {
     try {
       const res = await axios.post('/api/users/login', { email, password });
       if (res.status === 200 && res.data.token) {
@@ -67,13 +67,9 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       }
     } catch (e) {
       console.error('Login failed', e);
-      if (axios.isAxiosError(e) && e.response) {
-        showToast(`Login failed: ${e.response.data.message || 'Unknown error'}`, 'error');
-      } else {
-        showToast('Failed to login. Please try again later.', 'error');
-      }
+      showToast('Failed to login. Please check your credentials.', 'error');
     }
-  }, [router, setAuthToken]);
+  };
 
   const signup = async (name: string, email: string, password: string) => {
     try {

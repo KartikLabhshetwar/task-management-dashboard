@@ -39,18 +39,23 @@ export const TaskProvider: React.FC<{ children: React.ReactNode }> = ({ children
   const fetchTasks = useCallback(async () => {
     try {
       setLoading(true);
+      const token = localStorage.getItem('token');
       const response = await axios.get('/api/tasks', {
-        headers: getAuthHeader()
+        headers: { Authorization: `Bearer ${token}` }
       });
       setTasks(response.data);
       setError(null);
     } catch (err) {
-      setError('Failed to fetch tasks');
+      if (axios.isAxiosError(err) && err.response) {
+        setError(`Failed to fetch tasks: ${err.response.data.message || err.message}`);
+      } else {
+        setError('Failed to fetch tasks');
+      }
       console.error(err);
     } finally {
       setLoading(false);
     }
-  }, [getAuthHeader]);
+  }, []);
 
   const addTask = useCallback(async (newTask: Omit<Task, '_id'>) => {
     try {
