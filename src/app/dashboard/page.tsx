@@ -16,7 +16,7 @@ import TaskForm from '@/components/TaskForm'
 export default function Dashboard() {
   const router = useRouter()
   const { isAuthenticated, isLoading, checkAuthStatus } = useAuth()
-  const { tasks, loading, error, updateTask, deleteTask, showToast } = useTaskContext();
+  const { tasks, loading, error, fetchTasks, showToast, updateTask, deleteTask } = useTaskContext();
   const [sortField, setSortField] = useState<keyof Task>('dueDate');
   const [sortOrder, setSortOrder] = useState<'asc' | 'desc'>('asc');
   const [filters, setFilters] = useState({ status: '', priority: '', search: '' });
@@ -25,12 +25,14 @@ export default function Dashboard() {
   useEffect(() => {
     const init = async () => {
       await checkAuthStatus();
-      if (!isAuthenticated && !isLoading) {
+      if (isAuthenticated && !isLoading) {
+        fetchTasks();
+      } else if (!isAuthenticated && !isLoading) {
         router.push('/auth/login')
       }
     };
     init();
-  }, [isAuthenticated, isLoading, router, checkAuthStatus])
+  }, [isAuthenticated, isLoading, router, checkAuthStatus, fetchTasks])
 
   const handleSort = (field: keyof Task) => {
     if (field === sortField) {

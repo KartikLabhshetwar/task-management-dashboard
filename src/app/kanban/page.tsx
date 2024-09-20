@@ -45,12 +45,14 @@ export default function Kanban() {
   useEffect(() => {
     const init = async () => {
       await checkAuthStatus();
-      if (!isAuthenticated && !isLoading) {
+      if (isAuthenticated && !isLoading) {
+        fetchTasks();
+      } else if (!isAuthenticated && !isLoading) {
         router.push('/auth/login')
       }
     };
     init();
-  }, [isAuthenticated, isLoading, router, checkAuthStatus])
+  }, [isAuthenticated, isLoading, router, checkAuthStatus, fetchTasks])
 
   useEffect(() => {
     if (tasks.length > 0) {

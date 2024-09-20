@@ -1,10 +1,11 @@
 'use client'
 
-import { useEffect } from 'react'
+import { useEffect, useState } from 'react'
 import { useRouter } from 'next/navigation'
 import Link from 'next/link'
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { useAuth } from '@/context/AuthContext'
+import { useTaskContext } from '@/context/TaskContext'
 import { motion } from 'framer-motion'
 import { FaListUl, FaColumns } from 'react-icons/fa'
 import Navbar from '@/components/Navbar'
@@ -12,27 +13,27 @@ import Navbar from '@/components/Navbar'
 export default function Workspace() {
   const router = useRouter()
   const { isAuthenticated, isLoading, checkAuthStatus } = useAuth()
+  const { fetchTasks } = useTaskContext();
+  const [isInitializing, setIsInitializing] = useState(true);
 
   useEffect(() => {
     const init = async () => {
       await checkAuthStatus();
-      if (!isAuthenticated && !isLoading) {
-        router.push('/auth/login')
+      if (isAuthenticated && !isLoading) {
+        await fetchTasks();
       }
+      setIsInitializing(false);
     };
     init();
-  }, [isAuthenticated, isLoading, router, checkAuthStatus])
+  }, [isAuthenticated, isLoading, checkAuthStatus, fetchTasks])
 
-  if (isLoading) {
-    return (
-      <div className="flex justify-center items-center h-screen">
-        <div className="animate-spin rounded-full h-32 w-32 border-t-2 border-b-2 border-gray-900"></div>
-      </div>
-    )
+  if (isInitializing || isLoading) {
+    return <div className="flex justify-center items-center h-screen">Loading...</div>;
   }
 
   if (!isAuthenticated) {
-    return null
+    router.push('/auth/login');
+    return null;
   }
 
   return (
