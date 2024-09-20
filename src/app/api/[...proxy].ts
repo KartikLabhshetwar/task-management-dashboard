@@ -4,22 +4,24 @@ const TARGET = 'https://task-management-dashboard-backend.onrender.com'
 
 async function handler(req: NextRequest) {
   const url = new URL(req.url)
+  const targetUrl = `${TARGET}${url.pathname}${url.search}`
+
   try {
-    const response = await fetch(`${TARGET}${url.pathname}${url.search}`, {
+    const response = await fetch(targetUrl, {
       method: req.method,
       headers: {
-        ...req.headers,
+        ...Object.fromEntries(req.headers),
         'Content-Type': 'application/json',
       },
-      body: req.body
+      body: req.body,
     })
 
-    const data = await response.json()
+    const data = await response.text()
 
-    return new NextResponse(JSON.stringify(data), {
+    return new NextResponse(data, {
       status: response.status,
       headers: {
-        'Content-Type': 'application/json',
+        'Content-Type': response.headers.get('Content-Type') || 'application/json',
       }
     })
   } catch (error) {
