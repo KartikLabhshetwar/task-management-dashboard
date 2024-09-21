@@ -26,7 +26,7 @@ TaskMaster is a powerful, full-stack task management application built with Next
 
 1. Clone the repository
 2. Install dependencies: `npm install`
-3. Set up environment variables (see `.env.example`)
+3. Set up environment variables (see `.env.example`) in your server folder.
 4. Run the development server: `npm run dev`
 5. Open [http://localhost:3000](http://localhost:3000) in your browser
 
