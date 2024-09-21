@@ -83,14 +83,19 @@ export const TaskProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
   const deleteTask = useCallback(async (taskId: string) => {
     try {
-      await axios.delete(`/api/tasks/${taskId}`);
-      setTasks(tasks.filter(task => task._id !== taskId));
+      const token = localStorage.getItem('token');
+      if (!token) {
+        throw new Error('No authentication token found');
+      }
+      await axios.delete(`/api/tasks/${taskId}`, {
+        headers: { Authorization: `Bearer ${token}` }
+      });
+      setTasks(prevTasks => prevTasks.filter(task => task._id !== taskId));
       showToast('Task deleted successfully', 'success');
     } catch (error) {
       console.error('Error deleting task:', error);
       showToast('Failed to delete task. Please try again.', 'error');
       
-      // Add more detailed error logging
       if (axios.isAxiosError(error)) {
         console.error('Response status:', error.response?.status);
         console.error('Response data:', error.response?.data);
