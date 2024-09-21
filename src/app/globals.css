@@ -105,13 +105,27 @@ button {
 /* Add hover effect to cards */
 .card {
   transition: transform 0.2s ease, box-shadow 0.2s ease;
+  background: linear-gradient(145deg, #ffffff, #f0f0f0);
+  box-shadow: 5px 5px 15px #d1d1d1, -5px -5px 15px #ffffff;
 }
 
 .card:hover {
   transform: translateY(-5px);
-  box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+  box-shadow: 8px 8px 20px #c1c1c1, -8px -8px 20px #ffffff;
 }
 
 .loading-page {
   background-color: white;
+}
+
+.card-todo {
+  border-left: 4px solid #3b82f6;
+}
+
+.card-in-progress {
+  border-left: 4px solid #f59e0b;
+}
+
+.card-completed {
+  border-left: 4px solid #10b981;
 }

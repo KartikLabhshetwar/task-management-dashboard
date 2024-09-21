@@ -93,7 +93,7 @@ export default function Dashboard() {
         <div className="mb-6 grid grid-cols-1 md:grid-cols-3 gap-4 ">
           <Select onValueChange={(value) => handleFilter('status', value)}>
             <SelectTrigger>
-              <SelectValue placeholder="All Statuses" className="text-gray-800" />
+              <SelectValue placeholder="All Status" className="text-gray-800" />
             </SelectTrigger>
             <SelectContent>
               <SelectItem value="all">All Statuses</SelectItem>

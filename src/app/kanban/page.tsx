@@ -165,16 +165,32 @@ export default function Kanban() {
                     <CardContent>
                       {column.items.map((task, index) => (
                         <Draggable key={task._id} draggableId={task._id} index={index}>
-                          {(provided) => (
+                          {(provided, snapshot) => (
                             <div
                               ref={provided.innerRef}
                               {...provided.draggableProps}
                               {...provided.dragHandleProps}
-                              className="bg-white p-2 mb-2 rounded shadow"
+                              className={`card p-3 mb-2 rounded-lg ${
+                                task.status === 'To Do'
+                                  ? 'card-todo'
+                                  : task.status === 'In Progress'
+                                  ? 'card-in-progress'
+                                  : 'card-completed'
+                              } ${snapshot.isDragging ? 'shadow-2xl rotate-3' : ''}`}
                             >
-                              <h3 className="font-bold">{task.title}</h3>
-                              <p className="text-sm text-gray-600">Priority: {task.priority}</p>
-                              <p className="text-sm text-gray-600">Due: {new Date(task.dueDate).toLocaleDateString()}</p>
+                              <h3 className="font-bold text-gray-800">{task.title}</h3>
+                              <p className={`text-sm ${
+                                task.priority === 'High' 
+                                  ? 'text-red-600' 
+                                  : task.priority === 'Medium' 
+                                    ? 'text-yellow-600' 
+                                    : 'text-green-600'
+                              }`}>
+                                Priority: {task.priority}
+                              </p>
+                              <p className="text-sm text-gray-600">
+                                Due: {new Date(task.dueDate).toLocaleDateString()}
+                              </p>
                             </div>
                           )}
                         </Draggable>
