@@ -23,12 +23,10 @@ export default function Navbar() {
     <nav className="bg-white shadow-md">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between h-16">
-          <div className="flex">
-            <div className="flex-shrink-0 flex items-center">
-              <Link href="/workspace" className="text-2xl font-bold text-gray-800">
-                TaskMaster
-              </Link>
-            </div>
+          <div className="flex items-center">
+            <Link href="/workspace" className="text-2xl font-bold text-gray-800">
+              TaskMaster
+            </Link>
           </div>
           <div className="flex items-center">
             <span className="text-gray-600 mr-4">Welcome, {user?.name || 'User'}</span>

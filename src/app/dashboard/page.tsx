@@ -1,7 +1,7 @@
 'use client'
 
 import { useState, useEffect } from 'react'
-import { useRouter } from 'next/navigation'
+import { useRouter, usePathname } from 'next/navigation'
 import { useAuth } from '@/context/AuthContext'
 import { useTaskContext } from '@/context/TaskContext'
 import Navbar from '@/components/Navbar'
@@ -12,8 +12,10 @@ import { Input } from "@/components/ui/input"
 import { motion, AnimatePresence } from 'framer-motion'
 import { Task } from '@/context/TaskContext'
 import TaskForm from '@/components/TaskForm'
+import Link from 'next/link'
 
 export default function Dashboard() {
+  const pathname = usePathname()
   const router = useRouter()
   const { isAuthenticated, isLoading } = useAuth()
   const { tasks, loading, error, fetchTasks, showToast, updateTask, deleteTask } = useTaskContext();
@@ -64,16 +66,29 @@ export default function Dashboard() {
     return null // or a loading spinner
   }
 
-  if (loading) return <div className="flex justify-center items-center h-screen">Loading...</div>;
-  if (error) return <div className="flex justify-center items-center h-screen">Error: {error}</div>;
+  if (loading) return <div className="flex justify-center items-center h-screen loading-page text-black">Loading...</div>;
+  if (error) return <div className="flex justify-center items-center h-screen loading-page text-black">Error: {error}</div>;
+
 
   return (
     <div className="min-h-screen bg-gray-100">
       <Navbar />
+      <div className='flex justify-between items-center mb-4 mt-6'>
+      {pathname !== '/workspace' && (
+                <Link href="/workspace" className="ml-4 text-gray-600 hover:text-gray-800">
+
+                  Back to Workspace
+                </Link>
+              )}
+      </div>
+       
       <main className="container mx-auto p-4">
         <div className="flex justify-between items-center mb-6">
           <h1 className="text-3xl font-bold text-gray-800">Task List</h1>
-          <Button onClick={() => setIsAddingTask(true)}>Add New Task</Button>
+          <div className="space-x-2">
+            <Button onClick={() => setIsAddingTask(true)}>Add New Task</Button>
+            <Button onClick={() => router.push('/kanban')}>View Kanban Board</Button>
+          </div>
         </div>
         <div className="mb-6 grid grid-cols-1 md:grid-cols-3 gap-4 ">
           <Select onValueChange={(value) => handleFilter('status', value)}>

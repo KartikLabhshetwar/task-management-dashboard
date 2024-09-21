@@ -1,7 +1,7 @@
 'use client'
 
 import { useState, useEffect } from 'react'
-import { useRouter } from 'next/navigation'
+import { useRouter, usePathname } from 'next/navigation'
 import { useAuth } from '@/context/AuthContext'
 import { useTaskContext } from '@/context/TaskContext'
 import Navbar from '@/components/Navbar'
@@ -10,6 +10,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import TaskForm from '@/components/TaskForm'
 import { useTasks } from '@/hooks/useTasks'
+import Link from 'next/link'
 
 interface Task {
   _id: string;
@@ -31,6 +32,7 @@ type Columns = {
 type TaskStatus = 'To Do' | 'In Progress' | 'Completed';
 
 export default function Kanban() {
+  const pathname = usePathname();
   const router = useRouter()
   const { isAuthenticated, isLoading } = useAuth()
   const { tasks, loading, error, fetchTasks, showToast } = useTaskContext();
@@ -118,7 +120,7 @@ export default function Kanban() {
 
   if (isLoading) {
     return (
-      <div className="flex justify-center items-center h-screen">
+      <div className="flex justify-center items-center h-screen loading-page">
         <div className="animate-spin rounded-full h-32 w-32 border-t-2 border-b-2 border-gray-900"></div>
       </div>
     )
@@ -128,16 +130,28 @@ export default function Kanban() {
     return null
   }
 
-  if (loading) return <div className="flex justify-center items-center h-screen white">Loading...</div>;
-  if (error) return <div className="flex justify-center items-center h-screen white">Error: {error}</div>;
+  if (loading) return <div className="flex justify-center items-center h-screen loading-page text-black">Loading...</div>;
+  if (error) return <div className="flex justify-center items-center h-screen loading-page text-black">Error: {error}</div>;
+
 
   return (
     <div className="min-h-screen bg-gray-100">
       <Navbar />
+      <div className='flex justify-between items-center mb-4 mt-6'>
+      {pathname !== '/workspace' && (
+              <Link href="/workspace" className="ml-4 text-gray-600 hover:text-gray-800">
+                Back to Workspace
+              </Link>
+            )}
+      </div>
+     
       <main className="container mx-auto p-4">
         <div className="flex justify-between items-center mb-6">
           <h1 className="text-3xl font-bold text-black">Kanban Board</h1>
-          <Button onClick={() => setIsAddingTask(true)}>Add New Task</Button>
+          <div className="space-x-2">
+            <Button onClick={() => setIsAddingTask(true)}>Add New Task</Button>
+            <Button onClick={() => router.push('/dashboard')}>View Task List</Button>
+          </div>
         </div>
         <DragDropContext onDragEnd={onDragEnd}>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4">

@@ -2,12 +2,12 @@
 
 import { useEffect } from 'react'
 import { useRouter } from 'next/navigation'
-import Link from 'next/link'
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { useAuth } from '@/context/AuthContext'
 import { motion } from 'framer-motion'
 import { FaListUl, FaColumns } from 'react-icons/fa'
 import Navbar from '@/components/Navbar'
+import {Button} from '@/components/ui/button'
 
 export default function Workspace() {
   const router = useRouter()
@@ -25,7 +25,7 @@ export default function Workspace() {
 
   if (isLoading) {
     return (
-      <div className="flex justify-center items-center h-screen">
+      <div className="flex justify-center items-center h-screen loading-page">
         <div className="animate-spin rounded-full h-32 w-32 border-t-2 border-b-2 border-gray-900"></div>
       </div>
     )
@@ -47,35 +47,37 @@ export default function Workspace() {
               whileHover={{ scale: 1.05 }}
               whileTap={{ scale: 0.95 }}
             >
-              <Link href="/dashboard">
-                <Card className="h-full cursor-pointer">
-                  <CardHeader>
-                    <CardTitle className="flex items-center">
-                      <FaListUl className="mr-2" /> Task List
-                    </CardTitle>
-                  </CardHeader>
-                  <CardContent>
-                    <p>View and manage your tasks in a list format. Filter, sort, and perform CRUD operations.</p>
-                  </CardContent>
-                </Card>
-              </Link>
+              <Card className="h-full cursor-pointer">
+                <CardHeader>
+                  <CardTitle className="flex items-center">
+                    <FaListUl className="mr-2" /> Task List
+                  </CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <p>View and manage your tasks in a list format. Filter, sort, and perform CRUD operations.</p>
+                  <div className="mt-4">
+                    <Button onClick={() => router.push('/dashboard')}>View Task List</Button>
+                  </div>
+                </CardContent>
+              </Card>
             </motion.div>
             <motion.div
               whileHover={{ scale: 1.05 }}
               whileTap={{ scale: 0.95 }}
             >
-              <Link href="/kanban">
-                <Card className="h-full cursor-pointer">
-                  <CardHeader>
-                    <CardTitle className="flex items-center">
-                      <FaColumns className="mr-2" /> Kanban Board
-                    </CardTitle>
-                  </CardHeader>
-                  <CardContent>
-                    <p>Visualize your tasks in a Kanban board. Drag and drop tasks between different status columns.</p>
-                  </CardContent>
-                </Card>
-              </Link>
+              <Card className="h-full cursor-pointer">
+                <CardHeader>
+                  <CardTitle className="flex items-center">
+                    <FaColumns className="mr-2" /> Kanban Board
+                  </CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <p>Visualize your tasks in a Kanban board. Drag and drop tasks between different status columns.</p>
+                  <div className="mt-4">
+                    <Button onClick={() => router.push('/kanban')}>View Kanban Board</Button>
+                  </div>
+                </CardContent>
+              </Card>
             </motion.div>
           </div>
         </div>
